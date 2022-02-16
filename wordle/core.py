@@ -34,7 +34,6 @@ if a letter is displayed, then the letter is in word and in the correct postion\
 class Game:
     def __init__(self, words) -> None:
         self.words = words
-        self.turnCount = 1
 
     def startNewGame(self):
         #clearScreen()
@@ -52,64 +51,47 @@ class Game:
         gameSummary = []
 
         # start a game loop (6 turns)
-        while (self.turnCount <= 6):
-          print("Turn %d/6" %(self.turnCount))
-          # store user guess
-          guess = input("Guess:\t").upper()
-          validator.guess = guess
+        while (len(guesses) < 6):
+            print("Turn %d/6" %(len(guesses)+1))
+            # store user guess
+            guess = input("Guess:\t").upper()
+            validator.guess = guess
 
-          if guess == permSolution:
-            #clearScreen()
-            print('\nYou won with %d guess%s! The correct word was "%s"' %(self.turnCount, ('es','')[self.turnCount==1], permSolution))
-            gameWon = True
-            break
+            if not validator.checkCorrectLength():
+                print(validator.message)
+                continue
 
-          if self.turnCount == 6 or guess == 'GIVE UP':
-            #clearScreen()
-            print("\nSorry, you lost. The correct word was '%s'\n" %(permSolution))
-            break
+            if not validator.checkGuessInDictionary(self.words):
+                print(validator.message)
+                continue
 
-          if not validator.checkCorrectLength():
-            print(validator.message)
-            continue
+            guesses.append(guess)
 
-          if not validator.checkGuessInDictionary(self.words):
-            print(validator.message)
-            continue
+            if guess == 'GIVE UP':
+                print("\nSorry, you lost. The correct word was '%s'\n" %(permSolution))
+                break
+        
+            resultStr = ''.join(validator.getGuessResponse(self.solution, guess))
 
-          self.turnCount += 1
+            gameSummary.append(resultStr)
+            print("Result:\t%s\n" %(resultStr))
 
-          # used to give results for each guess
-          response = []
-          # reset solution
-          solution = permSolution
-          guesses.append(guess)
-          # loop through every letter in the guess
-          for letterPosition in range(0, 5):
-            # if the current letter in the guess is in the solution
-            if guess[letterPosition] in solution:
-              # if the letter is in the same place in guess and solution
-              if letterPosition is solution.find(guess[letterPosition]):
-                # mark with letter to indicate correct
-                response.append(guess[letterPosition])
-              # letter is in word, but wrong location
-              else:
-                # mark with star
-                response.append('*')
-              solution = solution.replace(guess[letterPosition], '-', 1)
-            # letter is not in word
-            else:
-              response.append('-')
+            if len(guesses) == 6 and guess != 'GIVE UP':
+                #clearScreen()
+                print("\nSorry, you lost. The correct word was '%s'\n" %(permSolution))
+                break
 
-          resultStr = ''.join(response)
-          gameSummary.append(resultStr)
-          print("Result:\t%s\n" %(resultStr))
+            if guess == permSolution:
+                #clearScreen()
+                print('\nYou won with %d guess%s! The correct word was "%s"' %(self.turnCount, ('es','')[self.turnCount==1], permSolution))
+                gameWon = True
+                break
 
         for index in range(0,len(gameSummary)):
-          print(guesses[index], "->", gameSummary[index])
+            print(guesses[index], "->", gameSummary[index])
 
-
-        return (gameWon, len(guesses))
+        print('')
+        return gameWon
 
     def getWordle(self):
         return random.choice(self.words).upper()
@@ -137,8 +119,34 @@ class GuessValidator:
     def checkGuessIsCorrect(self):
         return self.guess == self.solution
 
-            
+    def getGuessResponse(self, solution, guess):
+        self.solution = solution
+        self.guess = guess
+        
+        # used to give results for each guess
+        response = []
+        
+        # loop through every letter in the guess
+        for letterPosition in range(0, 5):
+        # if the current letter in the guess is in the solution
+            if self.guess[letterPosition] in self.solution:
+                # if the letter is in the same place in guess and solution
+                if letterPosition is self.solution.find(self.guess[letterPosition]):
+                    # mark with letter to indicate correct
+                    response.append(self.guess[letterPosition])
+                # letter is in word, but wrong location
+                else:
+                    # mark with star
+                    response.append('*')
+                    self.solution = self.solution.replace(self.guess[letterPosition], '-', 1)
+            # letter is not in word
+            else:
+                response.append('-')
+        return response
 
+
+            
+# just record number of wins and losses
 class Statistics:
     def __init__(self) -> None:
         pass
@@ -147,8 +155,7 @@ class Statistics:
         pass
 
     def writeStatistics(self, results):
-        print("writing results: ", results[0], results[1])
-        input()
+        pass
 
 
 class Wordle:
