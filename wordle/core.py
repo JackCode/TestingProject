@@ -143,11 +143,10 @@ class GuessValidator:
 
         for i in range(0, 5):
             for j in range(0, 5):
-                if result[i] == '-':
-                    if guess[i] == solution[j] and result[j] == '-':
-                        result[i] = '*'
+                
+                if guess[i] == solution[j] and result[i] == '-':
+                    result[i] = '*'
         return result
-
 # just record number of wins and losses
 class Statistics:
     def __init__(self) -> None:
