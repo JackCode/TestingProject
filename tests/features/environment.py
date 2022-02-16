@@ -2,8 +2,7 @@ import sys
 import io
 
 def before_all(context):
-    context.stdout_mock = io.StringIO()
-    sys.stdout = context.stdout_mock
+    context.outFile = open('./tests/features/output.txt', 'w')
 
 def after_all(context):
-    sys.stdout = sys.__stdout__
+    context.outFile.close()

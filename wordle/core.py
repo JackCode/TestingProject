@@ -1,6 +1,10 @@
+from cgi import test
 import sys
 import os
 import random
+
+testing = False
+wins = losses = 0
 
 class Menu:
     def __init__(self) -> None:
@@ -30,6 +34,8 @@ your guess was to the word.
 - means the letter is not found in the word
 * means the letter is in the word but not in the correct position
 if a letter is displayed, then the letter is in word and in the correct postion\n""")
+        if testing:
+            return
 
 class Game:
     def __init__(self, words) -> None:
@@ -38,6 +44,8 @@ class Game:
     def startNewGame(self):
         #clearScreen()
         print("*** WORDLE ***\n")
+        if testing:
+            return
         self.solution = self.getWordle()
         return self.run()
 
@@ -57,11 +65,11 @@ class Game:
             guess = input("Guess:\t").upper()
             validator.guess = guess
 
-            if not validator.checkCorrectLength():
+            if guess != 'GIVE UP' and not validator.checkCorrectLength():
                 print(validator.message)
                 continue
 
-            if not validator.checkGuessInDictionary(self.words):
+            if guess != 'GIVE UP' and not validator.checkGuessInDictionary(self.words):
                 print(validator.message)
                 continue
 
@@ -83,7 +91,7 @@ class Game:
 
             if guess == permSolution:
                 #clearScreen()
-                print('\nYou won with %d guess%s! The correct word was "%s"' %(self.turnCount, ('es','')[self.turnCount==1], permSolution))
+                print('\nYou won with %d guess%s! The correct word was "%s"' %(len(guesses), ('es','')[len(guesses)==1], permSolution))
                 gameWon = True
                 break
 
@@ -91,7 +99,12 @@ class Game:
             print(guesses[index], "->", gameSummary[index])
 
         print('')
-        return gameWon
+        global wins, losses
+        if gameWon:
+            wins += 1
+        else:
+            losses += 1
+        return
 
     def getWordle(self):
         return random.choice(self.words).upper()
@@ -122,44 +135,51 @@ class GuessValidator:
     def getGuessResponse(self, solution, guess):
         self.solution = solution
         self.guess = guess
-        
-        # used to give results for each guess
-        response = []
-        
-        # loop through every letter in the guess
-        for letterPosition in range(0, 5):
-        # if the current letter in the guess is in the solution
-            if self.guess[letterPosition] in self.solution:
-                # if the letter is in the same place in guess and solution
-                if letterPosition is self.solution.find(self.guess[letterPosition]):
-                    # mark with letter to indicate correct
-                    response.append(self.guess[letterPosition])
-                # letter is in word, but wrong location
-                else:
-                    # mark with star
-                    response.append('*')
-                    self.solution = self.solution.replace(self.guess[letterPosition], '-', 1)
-            # letter is not in word
-            else:
-                response.append('-')
-        return response
 
+        result = ['-', '-', '-', '-', '-']
+        for i in range(0, 5):
+            if guess[i] == solution[i]:
+                result[i] = guess[i]
 
-            
+        for i in range(0, 5):
+            for j in range(0, 5):
+                if result[i] == '-':
+                    if guess[i] == solution[j] and result[j] == '-':
+                        result[i] = '*'
+        return result
+
 # just record number of wins and losses
 class Statistics:
     def __init__(self) -> None:
         pass
 
-    def showStatistics():
-        pass
+    def showStatistics(self):
+        print('*** Statistics ***\n')
+        if testing:
+            return
 
-    def writeStatistics(self, results):
-        pass
+        global wins, losses
+        print("Number of Recorded Wins:", wins)
+        print("Number of Recorded Loses:", losses)
+        if wins + losses > 0:
+            percentage = wins/(wins+losses)
+        else:
+            percentage = 0
+        print('Win Percentage: %d%%\n' % percentage)
+
+    def resetStats():
+        global wins, losses
+        wins = losses = 0
 
 
 class Wordle:
-    def __init__(self) -> None:
+    def __init__(self, stdout_mock=sys.__stdout__, testModeNoGame=False) -> None:
+        # if flag is true, only text for each section is displayed
+        # prevents game from running when option 2 is selected
+        global testing
+        testing = testModeNoGame
+        # used to redirect stdout for testing purposes
+        sys.stdout = stdout_mock
         self.stats = Statistics()
 
     def loadDictionary(self, wordListFile = './wordle/wordle_list.txt'):
@@ -168,7 +188,9 @@ class Wordle:
     def runGame(self):
         while True:
             self.choice = Menu.show()
+            print('\n')
             self.menuChoice(self.choice)
+            
     
     def menuChoice(self, choice):
         match choice:
@@ -176,15 +198,11 @@ class Wordle:
                     Instructions.show()
                 case '2':
                     newGame = Game(self.words)
-                    self.stats.writeStatistics(newGame.startNewGame())
+                    newGame.startNewGame()
                 case '3':
                     self.stats.showStatistics()
                 case '4':
                     sys.exit()
-
-
-def clearScreen():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 if __name__=="__main__":

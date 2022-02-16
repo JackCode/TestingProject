@@ -1,6 +1,6 @@
 Feature: Menu
 
-    Showing operation of menu to navigate various functionality of program
+    Showing operation of menu to navigate to various functionality of program
 
     Scenario Outline: Viewing Screens
         Given the user enters a valid value of <menuchoice>
@@ -8,7 +8,7 @@ Feature: Menu
         Then the game will display <screen>
 
         Examples: Choices
-           | menuchoice    | screen        |
-           | 1             | Instructions  |
-           #| 2             | WORDLE        |
-           #| 3             | Statistics    |
+           | menuchoice    | screen               |
+           | 1             | *** Instructions *** |
+           | 2             | *** WORDLE ***       |
+           | 3             | *** Statistics ***   |
