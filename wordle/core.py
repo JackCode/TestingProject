@@ -7,7 +7,7 @@ class Menu:
         pass
 
     def show():
-        clearScreen()
+        #clearScreen()
         print(
 """*** WORDLE Menu ****\n
 1. View Instructions
@@ -18,9 +18,8 @@ class Menu:
 
 class Instructions:
     def show():
-        clearScreen()
-        print("""
-*** Instructions ****
+        #clearScreen()
+        print("""*** Instructions ****
 
 Guess the WORDLE in six tries!
 
@@ -30,8 +29,7 @@ your guess was to the word.
 
 - means the letter is not found in the word
 * means the letter is in the word but not in the correct position
-if a letter is displayed, then the letter is in word and in the correct postion""")
-        input("press [enter] to go back")
+if a letter is displayed, then the letter is in word and in the correct postion\n""")
 
 class Game:
     def __init__(self, words) -> None:
@@ -39,12 +37,13 @@ class Game:
         self.turnCount = 1
 
     def startNewGame(self):
-        clearScreen()
+        #clearScreen()
         print("*** WORDLE ***\n")
         self.solution = self.getWordle()
         return self.run()
 
     def run(self):
+        validator = GuessValidator(self.solution, "", "")
         # unchanging solution
         permSolution = self.solution
         gameWon = False
@@ -57,24 +56,25 @@ class Game:
           print("Turn %d/6" %(self.turnCount))
           # store user guess
           guess = input("Guess:\t").upper()
+          validator.guess = guess
 
           if guess == permSolution:
-            clearScreen()
-            print('You won with %d guess%s! The correct word was "%s"' %(self.turnCount, ('es','')[self.turnCount==1], permSolution))
+            #clearScreen()
+            print('\nYou won with %d guess%s! The correct word was "%s"' %(self.turnCount, ('es','')[self.turnCount==1], permSolution))
             gameWon = True
             break
 
           if self.turnCount == 6 or guess == 'GIVE UP':
-            clearScreen()
-            print("Sorry, you lost. The correct word was '%s'\n" %(permSolution))
+            #clearScreen()
+            print("\nSorry, you lost. The correct word was '%s'\n" %(permSolution))
             break
 
-          if len(guess) != 5:
-            print("Guess must contain exactly 5 letters.\n")
+          if not validator.checkCorrectLength():
+            print(validator.message)
             continue
 
-          if guess not in self.words:
-            print("Guess is not in dictionary\n")
+          if not validator.checkGuessInDictionary(self.words):
+            print(validator.message)
             continue
 
           self.turnCount += 1
@@ -108,12 +108,36 @@ class Game:
         for index in range(0,len(gameSummary)):
           print(guesses[index], "->", gameSummary[index])
 
-        input("press [enter] to go back")
 
         return (gameWon, len(guesses))
 
     def getWordle(self):
         return random.choice(self.words).upper()
+
+class GuessValidator:
+    def __init__(self, solution, guess, message) -> None:
+        self.solution = solution
+        self.guess = guess
+        self.message = message
+
+    def checkCorrectLength(self):
+        if len(self.guess) != 5:
+            self.message = "Guess must contain exactly 5 letters.\n"
+            return False
+        self.message = ""
+        return True
+
+    def checkGuessInDictionary(self, wordList):
+        if self.guess not in wordList:
+            self.message = "Guess is not in dictionary\n"
+            return False
+        self.message = ""
+        return True
+
+    def checkGuessIsCorrect(self):
+        return self.guess == self.solution
+
+            
 
 class Statistics:
     def __init__(self) -> None:

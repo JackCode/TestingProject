@@ -1,4 +1,7 @@
+import io
+from sys import stdin
 from behave import *
+import pyautogui
 
 from wordle.core import *
 
@@ -14,4 +17,4 @@ def step_impl(context):
 
 @then(u'the game will display {screen}')
 def step_impl(context, screen):
-    assert True is True
+    pass
