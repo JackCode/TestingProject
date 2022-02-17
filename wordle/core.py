@@ -150,7 +150,6 @@ class GuessValidator:
 
         for i in range(0, 5):
             for j in range(0, 5):
-                
                 if guess[i] == solution[j] and result[i] == '-':
                     result[i] = '*'
         return result
@@ -210,6 +209,8 @@ class Wordle:
                     self.stats.showStatistics()
                 case '4':
                     sys.exit()
+                case default:
+                    print("Invalid response")
 
 
 if __name__=="__main__":
