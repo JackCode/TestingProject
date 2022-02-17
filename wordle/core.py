@@ -178,7 +178,7 @@ class Statistics:
             percentage = wins/(wins+losses)
         else:
             percentage = 0
-        print('Win Percentage: %d%%\n' % percentage)
+        print('Win Percentage: %d%%\n' % (percentage*100))
 
     def resetStats():
         global wins, losses
