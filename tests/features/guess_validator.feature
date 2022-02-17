@@ -2,13 +2,19 @@ Feature: GuessValidator
 
     The GuessValidator checks various properties of the user's guess
 
-    Scenario: Checking length of user guess
-        Given the user enters TREE
-        When the user presses Enter
-        Then an error message is displayed
+    Scenario Outline: Checking length of user guess
+        Given the player enters <word>
+        When the player submits their guess
+        Then an error message <is_isnot> displayed
 
-    Scenario: Check word is in dictionary
+        Examples: 
+        | word    | is_isnot |
+        | tree    | is       |
+        | grasp   | isnot    |
+        | mansion | is       |
 
-    Scenario: Correct response is received (-, *, letters)
+    # Scenario: Check word is in dictionary
 
-    Scenario: Word is guessed correctly
+    # Scenario: Correct response is received (-, *, letters)
+
+    # Scenario: Word is guessed correctly
