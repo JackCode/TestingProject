@@ -32,7 +32,9 @@ your guess was to the word.
 
 - means the letter is not found in the word
 * means the letter is in the word but not in the correct position
-if a letter is displayed, then the letter is in word and in the correct postion\n""")
+if a letter is displayed, then the letter is in word and in the correct postion
+
+Type 'GIVE UP' to end the round and reveal the solution.\n""")
         if testing:
             return
 
