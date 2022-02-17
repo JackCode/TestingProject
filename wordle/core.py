@@ -38,6 +38,7 @@ if a letter is displayed, then the letter is in word and in the correct postion\
 
 class Game:
     def __init__(self, words) -> None:
+        self.userGuess = None
         self.words = words
 
     def startNewGame(self):
@@ -47,7 +48,12 @@ class Game:
             return
         self.solution = self.getWordle()
         return self.run()
-
+    
+    def getUserGuess(self, userGuess):
+        if testing:
+            return userGuess.upper()
+        else:
+            return input("Guess:\t").upper()
     def run(self):
         validator = GuessValidator(self.solution, "", "")
         # unchanging solution
@@ -61,7 +67,7 @@ class Game:
         while (len(guesses) < 6):
             print("Turn %d/6" %(len(guesses)+1))
             # store user guess
-            guess = input("Guess:\t").upper()
+            guess = self.getUserGuess(self.userGuess)
             validator.guess = guess
 
             if guess != 'GIVE UP' and not validator.checkCorrectLength():
