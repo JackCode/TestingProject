@@ -13,8 +13,12 @@ Feature: GuessValidator
         | grasp   | isnot    |
         | mansion | is       |
 
-    # Scenario: Check word is in dictionary
+    Scenario Outline: Correct response is received (-, *, letters)
+        Given the player enters a <valid guess>
+        When the game has a <solution>
+        Then the response received is <response>
 
-    # Scenario: Correct response is received (-, *, letters)
+        Examples: Valid Guesses
+        | BIKES | BIKES | BIKES |
 
     # Scenario: Word is guessed correctly

@@ -48,14 +48,14 @@ class Game:
         print("*** WORDLE ***\n")
         if testing:
             return
-        self.solution = self.getWordle()
+        self.solution = 'CAPED'#self.getWordle()
         return self.run()
     
     def getUserGuess(self, guessIndex):
         if testing:
             return self.userGuesses[guessIndex].upper()
         else:
-            return input("Guess:\t").upper()
+            return input("guess :  ").upper()
     def run(self):
         validator = GuessValidator(self.solution, "", "")
         # unchanging solution
@@ -67,7 +67,9 @@ class Game:
 
         # start a game loop (6 turns)
         while (len(guesses) < 6):
-            print("Turn %d/6" %(len(guesses)+1))
+            print("\nTurn %d/6" %(len(guesses)+1))
+            self.printGuesses(gameSummary, guesses)
+            print()
             # store user guess
             guess = self.getUserGuess(len(guesses))
             validator.guess = guess
@@ -89,7 +91,7 @@ class Game:
             resultStr = ''.join(validator.getGuessResponse(self.solution, guess))
 
             gameSummary.append(resultStr)
-            print("Result:\t%s\n" %(resultStr))
+            #print("Result:\t%s\n" %(resultStr))
 
             if len(guesses) == 6 and guess != 'GIVE UP':
                 #clearScreen()
@@ -102,8 +104,9 @@ class Game:
                 gameWon = True
                 break
 
-        for index in range(0,len(gameSummary)):
-            print(guesses[index], "->", gameSummary[index])
+        self.printGuesses(gameSummary, guesses)
+        # for index in range(0,len(gameSummary)):
+        #     print(guesses[index], "->", gameSummary[index])
 
         print('')
         global wins, losses
@@ -112,6 +115,11 @@ class Game:
         else:
             losses += 1
         return
+
+    def printGuesses(self, gameSummary, guesses):
+        for index in range(0,len(gameSummary)):
+            print(guesses[index], "->", gameSummary[index])
+
 
     def getWordle(self):
         return random.choice(self.words).upper()
@@ -150,10 +158,10 @@ class GuessValidator:
 
         for i in range(0, 5):
             for j in range(0, 5):
-                if guess[i] == solution[j] and result[i] == '-':
+                if guess[i] == solution[j] and result[j] != solution[j]:
                     result[i] = '*'
         return result
-# just record number of wins and losses
+
 class Statistics:
     def __init__(self) -> None:
         pass
@@ -210,7 +218,7 @@ class Wordle:
                 case '4':
                     sys.exit()
                 case default:
-                    print("Invalid response")
+                    print("Invalid response\n")
 
 
 if __name__=="__main__":
