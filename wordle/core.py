@@ -18,7 +18,6 @@ class Menu:
 2. Start new game
 3. View game statistics
 4. Exit""")
-        return input("\nEnter your choice: ")
 
 class Instructions:
     def show():
@@ -192,7 +191,8 @@ class Wordle:
 
     def runGame(self):
         while True:
-            self.choice = Menu.show()
+            Menu.show()
+            self.choice = input("\nEnter Choice: ")
             print('\n')
             self.menuChoice(self.choice)
             
