@@ -18,6 +18,8 @@ class Menu:
 2. Start new game
 3. View game statistics
 4. Exit""")
+        if testing:
+            return 4
         return input("\nEnter your choice: ")
 
 class Instructions:
