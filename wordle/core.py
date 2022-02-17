@@ -4,7 +4,7 @@ import os
 import random
 
 testing = False
-wins = losses = 0
+wins = losses = 0.0
 
 class Menu:
     def __init__(self) -> None:
@@ -145,7 +145,7 @@ class GuessValidator:
         return True
 
     def checkGuessIsCorrect(self):
-        return self.guess == self.solution
+        return self.guess.upper() == self.solution.upper()
 
     def getGuessResponse(self, solution, guess):
         self.solution = solution
