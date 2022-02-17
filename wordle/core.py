@@ -48,7 +48,7 @@ class Game:
         print("*** WORDLE ***\n")
         if testing:
             return
-        self.solution = 'CAPED'#self.getWordle()
+        self.solution = self.getWordle()
         return self.run()
     
     def getUserGuess(self, guessIndex):
@@ -158,7 +158,7 @@ class GuessValidator:
 
         for i in range(0, 5):
             for j in range(0, 5):
-                if guess[i] == solution[j] and result[j] != solution[j]:
+                if result[i] == '-' and guess[i] == solution[j] and result[j] != solution[j]:
                     result[i] = '*'
         return result
 
